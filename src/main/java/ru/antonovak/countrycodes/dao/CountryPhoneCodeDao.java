@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Optional;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,6 +19,7 @@ import ru.antonovak.countrycodes.model.CountryPhoneCode;
  * @author Alex Antonov {alexantonov145@gmail.com}
  */
 @Repository
+@Slf4j
 public class CountryPhoneCodeDao {
 
   private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -33,6 +35,7 @@ public class CountryPhoneCodeDao {
 
 
   public void reloadData(List<CountryPhoneCode> countryPhoneCodes) {
+    log.info("reloadData() countryPhoneCodes={}", countryPhoneCodes);
     transactionTemplate.executeWithoutResult((transactionStatus) -> {
       jdbcTemplate.execute("TRUNCATE TABLE country_phone_code");
       countryPhoneCodes.forEach(
@@ -45,11 +48,13 @@ public class CountryPhoneCodeDao {
   }
 
   public Optional<String> getPhoneCodeByCountryName(String countryName) {
+    log.info("getPhoneCodeByCountryName() countryName={}", countryName);
     try {
       return Optional.of(namedParameterJdbcTemplate.queryForObject(
           "SELECT phone_code FROM country_phone_code WHERE COUNTRY_NAME = :countryName",
           new MapSqlParameterSource().addValue("countryName", countryName), String.class));
     } catch (EmptyResultDataAccessException e) {
+      log.warn("Phone code not found", e);
       return Optional.empty();
     }
   }
