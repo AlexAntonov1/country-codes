@@ -11,7 +11,7 @@ import ru.antonovak.countrycodes.feignclients.CountryIoClient;
 import ru.antonovak.countrycodes.model.CountryPhoneCode;
 
 /**
- * Controller для работы с таблицей в бд "country_phone_code"
+ * Поставляет сформированные данные из клиента country.io
  *
  * @author Alex Antonov {alexantonov145@gmail.com}
  */
